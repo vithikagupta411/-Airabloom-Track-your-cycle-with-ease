@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Prediction Calendar</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .calendar-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-height: 80vh;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+    .calendar {
+      margin: 30px 0;
+      padding: 20px;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 500px;
+      background: #fffafc;
+    }
+    .calendar h3 {
+      margin: 0 0 10px;
+      font-size: 1.4em;
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 6px;
+      text-align: center;
+      position: relative;
+    }
+    .period-day {
+      background-color: #ffcccc;
+    }
+    .ovulation-day::after {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 4px;
+      background-color: #003366; /* Deep blue underline */
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      border-radius: 2px;
+    }
+    .today {
+      border: 2px solid green;
+    }
+  
+btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #c71585;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+btn:hover {
+  background-color: #a0136f;
+}
+  </style>
+</head>
+<body>
+  <h2 style="text-align: center;">🗓️ 6-Month Period & Ovulation Tracker</h2>
+
+  <div class="calendar-container">
+    {% for cal in calendars %}
+      <div class="calendar">
+        <h3>📅 {{ cal.month_name }} {{ cal.year }}</h3>
+        <table>
+          <tr>
+            <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th>
+            <th>Thu</th><th>Fri</th><th>Sat</th>
+          </tr>
+          {% for week in cal.weeks %}
+            <tr>
+              {% for day in week %}
+                {% if day == 0 %}
+                  <td></td>
+                {% else %}
+                  {% set date_str = "{:04d}-{:02d}-{:02d}".format(cal.year, cal.month, day) %}
+                  {% set cls = [] %}
+                  {% if date_str in period_days %} {% set _ = cls.append('period-day') %} {% endif %}
+                  {% if date_str in ovulation_days %} {% set _ = cls.append('ovulation-day') %} {% endif %}
+                  {% if date_str == today %} {% set _ = cls.append('today') %} {% endif %}
+                  <td class="{{ ' '.join(cls) }}">{{ day }}</td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+    {% endfor %}
+
+    <div style="text-align: center; margin-top: 30px;">
+      <a href="/" class="btn">← Go back to Home</a>
+      <a href="/logout" class="btn">Logout</a>
+    </div>
+  </div>
+</body>
+</html>

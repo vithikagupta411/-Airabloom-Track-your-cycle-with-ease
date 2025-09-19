@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Period Tracker</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <body>
+  <!-- Toast Notification -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div id="toast" class="toast {{ messages[0][0] }}">
+        <i>💌</i> {{ messages[0][1] }}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="container">
+    <div class="logo-section">
+      <video autoplay loop muted playsinline>
+        <source src="{{ url_for('static', filename='images/Flow.mp4') }}" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <div class="form-section">
+      <form method="POST" action="{{ url_for('result') }}">
+        <h2>Period Tracker</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages">
+              {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <label for="last_period_date">Last Period Start Date:</label>
+        <input type="date" id="last_period_date" name="last_period_date" required>
+
+        <label for="cycle_length">Cycle Length (in days):</label>
+        <input type="number" id="cycle_length" name="cycle_length" required>
+
+        <button type="submit">Predict</button>
+      </form>
+
+      <p style="text-align:center; margin-top:20px;">
+        <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+      </p>
+    </div>
+  </div>
+  <script>
+  window.onload = function() {
+    const toast = document.getElementById("toast");
+    if (toast) {
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 4000); // hide after 4s
+    }
+  };
+</script>
+
+</body>
+</html>
